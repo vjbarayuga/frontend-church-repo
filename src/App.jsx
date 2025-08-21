@@ -28,6 +28,8 @@ import EditPageContent from "./admin/EditPageContent";
 import EditDeleteServices from "./admin/EditDeleteServices";
 import EditDeleteSacraments from "./admin/EditDeleteSacraments";
 import EditDeleteReadings from "./admin/EditDeleteReadings";
+
+import EditNewsPage from "./admin/EditNewsPage";
 import AdminLogin from "./admin/AdminLogin";
 import AdminRegister from "./admin/AdminRegister";
 
@@ -128,6 +130,7 @@ function App() {
                   element={<EditDeleteAnnouncements />}
                 />
                 <Route path="edit-events" element={<EditDeleteEvents />} />
+                <Route path="edit-news" element={<EditNewsPage />} />
                 <Route
                   path="edit-slideshow"
                   element={<EditDeleteSlideshow />}

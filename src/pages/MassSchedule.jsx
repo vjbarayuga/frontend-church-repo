@@ -6,6 +6,28 @@ import { motion } from "framer-motion";
 
 export default function MassSchedule() {
   const [schedule, setSchedule] = useState({});
+  const [heroData, setHeroData] = useState({
+    heroImage: "/images/mass-hero.jpg",
+    heroTitle: "Mass Schedule",
+    heroSubtitle: "Join Us in Prayer and Worship",
+  });
+
+  useEffect(() => {
+    async function fetchPageContent() {
+      try {
+        const res = await axiosClient.get("/page-content/mass-times");
+        if (res.data) {
+          setHeroData({
+            heroImage: res.data.heroImage || "/images/mass-hero.jpg",
+            heroTitle: res.data.heroTitle || "Mass Schedule",
+            heroSubtitle:
+              res.data.heroSubtitle || "Join Us in Prayer and Worship",
+          });
+        }
+      } catch (err) {}
+    }
+    fetchPageContent();
+  }, []);
 
   useEffect(() => {
     axiosClient.get("/massschedule").then((res) => {
@@ -48,9 +70,9 @@ export default function MassSchedule() {
   return (
     <>
       <Hero
-        title="Mass Schedule"
-        subtitle="Join Us in Prayer and Worship"
-        backgroundImage="/images/mass-hero.jpg"
+        title={heroData.heroTitle}
+        subtitle={heroData.heroSubtitle}
+        backgroundImage={heroData.heroImage}
       />
 
       <div className="max-w-6xl mx-auto px-4 py-12">

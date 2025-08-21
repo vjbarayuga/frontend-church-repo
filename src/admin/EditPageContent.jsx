@@ -17,7 +17,9 @@ export default function EditPageContent() {
   const [previewUrl, setPreviewUrl] = useState("");
 
   const pages = [
-    { key: "about", label: "About Us" },
+    { key: "our-history", label: "Our History" },
+    { key: "announcements", label: "Announcements" },
+    { key: "events", label: "Events" },
     { key: "priest", label: "Priest Biography" },
     { key: "mass-times", label: "Mass Times" },
     { key: "services", label: "Services" },

@@ -1,11 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Hero from "../components/Hero";
 import Sidebar from "../components/Sidebar";
 import { FaChurch, FaHeart, FaUsers, FaHandsHelping } from "react-icons/fa";
+import axiosClient from "../api/axiosClient";
 
 export default function AboutUs() {
   const [selectedId, setSelectedId] = useState(1);
+  const [heroData, setHeroData] = useState({
+    heroImage: "/images/church-main.jpg",
+    heroTitle: "About Our Parish",
+    heroSubtitle: "Learn about our history, mission, and community",
+  });
+
+  useEffect(() => {
+    async function fetchPageContent() {
+      try {
+        const res = await axiosClient.get("/page-content/about");
+        if (res.data) {
+          setHeroData({
+            heroImage: res.data.heroImage || "/images/church-main.jpg",
+            heroTitle: res.data.heroTitle || "About Our Parish",
+            heroSubtitle:
+              res.data.heroSubtitle ||
+              "Learn about our history, mission, and community",
+          });
+        }
+      } catch (err) {
+        // fallback to defaults
+      }
+    }
+    fetchPageContent();
+  }, []);
 
   const sections = [
     {
@@ -48,9 +74,9 @@ export default function AboutUs() {
   return (
     <>
       <Hero
-        title="About Our Parish"
-        subtitle="Learn about our history, mission, and community"
-        backgroundImage="/images/church-main.jpg"
+        title={heroData.heroTitle}
+        subtitle={heroData.heroSubtitle}
+        backgroundImage={heroData.heroImage}
       />
 
       <div className="max-w-7xl mx-auto px-4 py-12">

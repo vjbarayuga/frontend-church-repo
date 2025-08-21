@@ -1,24 +1,48 @@
-import { useEffect, useState } from 'react';
-import Hero from '../components/Hero';
-import axiosClient from '../api/axiosClient';
+import { useEffect, useState } from "react";
+import Hero from "../components/Hero";
+import axiosClient from "../api/axiosClient";
 
 export default function Announcements() {
   const [announcements, setAnnouncements] = useState([]);
+  const [heroData, setHeroData] = useState({
+    heroImage: "/images/announcements-hero.jpg",
+    heroTitle: "Parish Announcements",
+    heroSubtitle: "Stay Updated with Church News and Activities",
+  });
 
   useEffect(() => {
-    axiosClient.get('/announcements')
+    async function fetchPageContent() {
+      try {
+        const res = await axiosClient.get("/page-content/announcements");
+        if (res.data) {
+          setHeroData({
+            heroImage: res.data.heroImage || "/images/announcements-hero.jpg",
+            heroTitle: res.data.heroTitle || "Parish Announcements",
+            heroSubtitle:
+              res.data.heroSubtitle ||
+              "Stay Updated with Church News and Activities",
+          });
+        }
+      } catch (err) {}
+    }
+    fetchPageContent();
+  }, []);
+
+  useEffect(() => {
+    axiosClient
+      .get("/announcements")
       .then((res) => setAnnouncements(res.data))
       .catch((err) => {
-        console.error('Failed to fetch announcements:', err);
+        console.error("Failed to fetch announcements:", err);
       });
   }, []);
 
   return (
     <>
-      <Hero 
-        title="Parish Announcements"
-        subtitle="Stay Updated with Church News and Activities"
-        backgroundImage="/images/announcements-hero.jpg"
+      <Hero
+        title={heroData.heroTitle}
+        subtitle={heroData.heroSubtitle}
+        backgroundImage={heroData.heroImage}
       />
 
       <div className="max-w-4xl mx-auto p-6 mt-6">
