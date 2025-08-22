@@ -5,6 +5,7 @@ export default function EditDeleteAnnouncements() {
   const [announcements, setAnnouncements] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     fetchAnnouncements();
@@ -18,10 +19,19 @@ export default function EditDeleteAnnouncements() {
   const handleAdd = async () => {
     if (!title || !content) return;
 
-    const res = await axiosClient.post("/announcements", { title, content });
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("content", content);
+    if (image) {
+      formData.append("image", image);
+    }
+    const res = await axiosClient.post("/announcements", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     setAnnouncements([...announcements, res.data]);
     setTitle("");
     setContent("");
+    setImage(null);
   };
 
   const handleDelete = async (id) => {
@@ -40,13 +50,18 @@ export default function EditDeleteAnnouncements() {
               {new Date(a.date).toLocaleDateString()}
             </p>
             <p className="mt-1 text-gray-800">{a.content}</p>
+            {a.heroImage && (
+              <img
+                src={a.heroImage}
+                alt="Hero"
+                className="mt-2 max-h-32 rounded"
+              />
+            )}
             <div className="flex gap-2 mt-2">
-
-
-
-
-
-              <button onClick={() => handleDelete(a._id)} className="text-red-600">
+              <button
+                onClick={() => handleDelete(a._id)}
+                className="text-red-600"
+              >
                 Delete
               </button>
             </div>
@@ -67,6 +82,12 @@ export default function EditDeleteAnnouncements() {
           placeholder="Content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files[0])}
+          className="border p-2 mb-2 block"
         />
         <button
           onClick={handleAdd}

@@ -4,16 +4,24 @@ import axiosClient from "../api/axiosClient";
 export default function EditDeletePriestBio() {
   const [bio, setBio] = useState([]);
   const [newBio, setNewBio] = useState("");
+  const [photo, setPhoto] = useState(null);
 
   useEffect(() => {
     axiosClient.get("/priests").then((res) => setBio(res.data));
   }, []);
 
-  const handleAdd = () => {
-    axiosClient.post("/priests", { bio: newBio }).then((res) => {
-      setBio([...bio, res.data]);
-      setNewBio("");
+  const handleAdd = async () => {
+    const formData = new FormData();
+    formData.append("bio", newBio);
+    if (photo) {
+      formData.append("photo", photo);
+    }
+    const res = await axiosClient.post("/priests", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
+    setBio([...bio, res.data]);
+    setNewBio("");
+    setPhoto(null);
   };
 
   const handleDelete = (id) => {
@@ -31,6 +39,12 @@ export default function EditDeletePriestBio() {
         placeholder="Enter priest bio..."
         className="w-full border p-2 mb-2"
       />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setPhoto(e.target.files[0])}
+        className="border p-2 mb-2 block"
+      />
       <button
         onClick={handleAdd}
         className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -43,7 +57,16 @@ export default function EditDeletePriestBio() {
             key={b._id}
             className="flex justify-between items-center mb-2 border p-2"
           >
-            <span>{b.bio}</span>
+            <div className="flex items-center gap-4">
+              {b.photo && (
+                <img
+                  src={b.photo}
+                  alt="Priest"
+                  className="h-16 w-16 object-cover rounded-full"
+                />
+              )}
+              <span>{b.bio}</span>
+            </div>
             <button
               onClick={() => handleDelete(b._id)}
               className="bg-red-500 text-white px-3 py-1 rounded"

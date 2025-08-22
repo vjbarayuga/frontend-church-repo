@@ -6,18 +6,28 @@ export default function EditDeleteEvents() {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     axiosClient.get("/events").then((res) => setEvents(res.data));
   }, []);
 
-  const handleAdd = () => {
-    axiosClient.post("/events", { title, date, description }).then((res) => {
-      setEvents([...events, res.data]);
-      setTitle("");
-      setDate("");
-      setDescription("");
+  const handleAdd = async () => {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("date", date);
+    formData.append("description", description);
+    if (image) {
+      formData.append("image", image);
+    }
+    const res = await axiosClient.post("/events", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
+    setEvents([...events, res.data]);
+    setTitle("");
+    setDate("");
+    setDescription("");
+    setImage(null);
   };
 
   const handleDelete = (id) => {
@@ -25,7 +35,6 @@ export default function EditDeleteEvents() {
       setEvents(events.filter((e) => e._id !== id));
     });
   };
-
 
   return (
     <div className="p-4">
@@ -49,6 +58,13 @@ export default function EditDeleteEvents() {
         placeholder="Description"
         className="w-full border p-2 mb-2 mt-2"
       />
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setImage(e.target.files[0])}
+        className="border p-2 mb-2 block"
+      />
       <button
         onClick={handleAdd}
         className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -66,6 +82,13 @@ export default function EditDeleteEvents() {
               <p className="font-bold">{e.title}</p>
               <p>{e.date}</p>
               <p>{e.description}</p>
+              {e.heroImage && (
+                <img
+                  src={e.heroImage}
+                  alt="Hero"
+                  className="mt-2 max-h-32 rounded"
+                />
+              )}
             </div>
             <button
               onClick={() => handleDelete(e._id)}

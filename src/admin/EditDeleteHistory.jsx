@@ -3,6 +3,8 @@ import axiosClient from "../api/axiosClient";
 
 export default function EditDeleteHistory() {
   const [history, setHistory] = useState("");
+  const [heroImage, setHeroImage] = useState(null);
+  const [currentHeroImage, setCurrentHeroImage] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState("");
@@ -13,10 +15,12 @@ export default function EditDeleteHistory() {
       .get("/history")
       .then((res) => {
         setHistory(res.data?.content || "");
+        setCurrentHeroImage(res.data?.heroImage || "");
         setLoading(false);
       })
       .catch(() => {
         setHistory("");
+        setCurrentHeroImage("");
         setLoading(false);
       });
   }, []);
@@ -26,8 +30,17 @@ export default function EditDeleteHistory() {
     setSuccess("");
     setError("");
     try {
-      await axiosClient.put("/history", { content: history });
+      const formData = new FormData();
+      formData.append("content", history);
+      if (heroImage) {
+        formData.append("image", heroImage);
+      }
+      await axiosClient.put("/history", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setSuccess("History updated successfully.");
+      if (heroImage) setCurrentHeroImage(URL.createObjectURL(heroImage));
+      setHeroImage(null);
     } catch (err) {
       setError("Failed to update history.");
     }
@@ -41,6 +54,19 @@ export default function EditDeleteHistory() {
         <p>Loading...</p>
       ) : (
         <>
+          {currentHeroImage && (
+            <img
+              src={currentHeroImage}
+              alt="Hero"
+              className="mb-4 max-h-48 rounded"
+            />
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setHeroImage(e.target.files[0])}
+            className="border p-2 mb-4 block"
+          />
           <textarea
             className="w-full border p-3 h-40"
             placeholder="Update church history here..."

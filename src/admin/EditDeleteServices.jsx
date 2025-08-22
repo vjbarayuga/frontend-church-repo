@@ -53,51 +53,46 @@ export default function EditDeleteServices() {
     }
   };
 
-  const uploadImage = async (file) => {
-    try {
-      const formDataUpload = new FormData();
-      formDataUpload.append("image", file);
-
-      const response = await axiosClient.post(
-        "/slideshow/upload",
-        formDataUpload,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      return response.data.filePath;
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      throw new Error("Failed to upload image");
-    }
-  };
+  // No longer needed: uploadImage
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      let imageUrl = formData.image;
-
+      const data = new FormData();
+      data.append("name", formData.name);
+      data.append("description", formData.description);
+      data.append("fees", formData.fees);
+      data.append("contactInfo", formData.contactInfo);
+      data.append("order", formData.order);
+      data.append("isActive", formData.isActive);
+      // requirements and processSteps as JSON strings
+      data.append(
+        "requirements",
+        JSON.stringify(formData.requirements.filter((req) => req.trim() !== ""))
+      );
+      data.append(
+        "processSteps",
+        JSON.stringify(
+          formData.processSteps.filter(
+            (step) => step.step.trim() !== "" || step.description.trim() !== ""
+          )
+        )
+      );
       if (selectedFile) {
-        imageUrl = await uploadImage(selectedFile);
+        data.append("image", selectedFile);
+      } else if (formData.image) {
+        data.append("image", formData.image);
       }
 
-      const serviceData = {
-        ...formData,
-        image: imageUrl,
-        requirements: formData.requirements.filter((req) => req.trim() !== ""),
-        processSteps: formData.processSteps.filter(
-          (step) => step.step.trim() !== "" || step.description.trim() !== ""
-        ),
-      };
-
       if (editingService) {
-        await axiosClient.put(`/services/${editingService._id}`, serviceData);
+        await axiosClient.put(`/services/${editingService._id}`, data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       } else {
-        await axiosClient.post("/services", serviceData);
+        await axiosClient.post("/services", data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       }
 
       fetchServices();

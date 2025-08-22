@@ -5,6 +5,7 @@ export default function EditDeleteMassSchedule() {
   const [schedule, setSchedule] = useState([]);
   const [day, setDay] = useState("");
   const [time, setTime] = useState("");
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     fetchSchedule();
@@ -22,10 +23,19 @@ export default function EditDeleteMassSchedule() {
   const handleAdd = async () => {
     if (!day || !time) return alert("Please fill in both fields.");
     try {
-      const res = await axiosClient.post("/massschedule", { day, time });
+      const formData = new FormData();
+      formData.append("day", day);
+      formData.append("time", time);
+      if (image) {
+        formData.append("image", image);
+      }
+      const res = await axiosClient.post("/massschedule", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setSchedule([...schedule, res.data]);
       setDay("");
       setTime("");
+      setImage(null);
     } catch (err) {
       console.error("Add failed:", err);
     }
@@ -58,6 +68,12 @@ export default function EditDeleteMassSchedule() {
           placeholder="Time (e.g., 9:00 AM)"
           className="border p-2 rounded w-full sm:w-auto"
         />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files[0])}
+          className="border p-2 rounded w-full sm:w-auto"
+        />
         <button
           onClick={handleAdd}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -71,7 +87,14 @@ export default function EditDeleteMassSchedule() {
             key={s._id}
             className="flex justify-between items-center bg-gray-100 p-3 rounded"
           >
-            <span className="text-gray-800">
+            <span className="text-gray-800 flex items-center gap-4">
+              {s.heroImage && (
+                <img
+                  src={s.heroImage}
+                  alt="Hero"
+                  className="h-10 w-16 object-cover rounded"
+                />
+              )}
               {s.day} - {s.time}
             </span>
             <button
