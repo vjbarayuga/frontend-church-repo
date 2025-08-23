@@ -49,7 +49,7 @@ export default function EditDeleteHistory() {
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6">
-      <h2 className="text-2xl font-bold mb-4">Edit Church History</h2>
+      {/* <h2 className="text-2xl font-bold mb-4">Edit Church History</h2> */}
       {loading ? (
         <p>Loading...</p>
       ) : (

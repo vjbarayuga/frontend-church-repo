@@ -38,11 +38,8 @@ export default function Donate() {
         <h1 className="text-3xl font-bold mb-4">Donate</h1>
         <p className="text-gray-700 mb-4">
           Your contributions help sustain our programs and outreach. Thank you
-          for your generosity.
+          for your generosity. Reach out to us at{" email: "}
         </p>
-        <button className="bg-green-600 text-white px-6 py-2 rounded">
-          Donate Now
-        </button>
       </div>
     </>
   );

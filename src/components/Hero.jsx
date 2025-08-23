@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 export default function Hero({ title, subtitle, backgroundImage }) {
   return (
     <div
-      className="relative h-[60vh] bg-cover bg-center"
+      className="relative h-[70vh] bg-cover bg-center"
       style={{
         backgroundImage: `url('${backgroundImage}')`,
       }}

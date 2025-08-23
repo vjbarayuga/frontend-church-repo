@@ -14,7 +14,7 @@ export default function Navbar() {
 
   const navLinks = [
     { to: "/", label: "Home" },
-    { to: "/our-history", label: "About" },
+    { to: "/our-history", label: "History" },
     { to: "/priest-bio", label: "Priest" },
     { to: "/mass-schedule", label: "Mass Times" },
     { to: "/services", label: "Services" },

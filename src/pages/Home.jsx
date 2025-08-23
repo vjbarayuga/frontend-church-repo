@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import axiosClient from "../api/axiosClient";
@@ -18,6 +18,22 @@ export default function Home() {
   const [todaysReadings, setTodaysReadings] = useState(null);
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState([]);
+
+  // Fetch events for preview
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axiosClient.get("/events");
+        if (response.data && Array.isArray(response.data)) {
+          setEvents(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+    fetchEvents();
+  }, []);
 
   // Default slides as fallback
   const defaultSlides = [
@@ -41,13 +57,6 @@ export default function Home() {
 
   const quickActions = [
     {
-      icon: FaCross,
-      title: "Confession",
-      description: "Saturday 4:00-4:30 PM",
-      link: "/mass-schedule",
-      color: "bg-purple-600",
-    },
-    {
       icon: FaPray,
       title: "Mass Times",
       description: "Daily & Weekend Services",
@@ -58,7 +67,7 @@ export default function Home() {
       icon: FaHandsHelping,
       title: "Service",
       description: "Ways to get involved",
-      link: "/events",
+      link: "/services",
       color: "bg-green-600",
     },
     {
@@ -397,81 +406,50 @@ export default function Home() {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Sample events - replace with dynamic content */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-lg shadow-lg p-6"
-            >
-              <div className="flex items-center mb-4">
-                <FaCalendarAlt className="text-blue-600 mr-3" />
-                <span className="text-sm text-gray-500">August 15, 2025</span>
+            {events && events.length > 0 ? (
+              events.slice(0, 3).map((event, idx) => (
+                <motion.div
+                  key={event._id || idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: idx * 0.1 }}
+                  viewport={{ once: true }}
+                  className="bg-white rounded-lg shadow-lg p-6"
+                >
+                  <div className="flex items-center mb-4">
+                    <FaCalendarAlt className="text-blue-600 mr-3" />
+                    <span className="text-sm text-gray-500">
+                      {event.date
+                        ? new Date(event.date).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                        : "TBA"}
+                    </span>
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                    {event.title}
+                  </h4>
+                  <p className="text-gray-600 text-sm mb-4">
+                    {event.description
+                      ? event.description.substring(0, 60) +
+                        (event.description.length > 60 ? "..." : "")
+                      : "No description."}
+                  </p>
+                  <Link
+                    to="/events"
+                    className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+                  >
+                    Learn More →
+                  </Link>
+                </motion.div>
+              ))
+            ) : (
+              <div className="col-span-3 text-center text-gray-500">
+                No upcoming events found.
               </div>
-              <h4 className="text-lg font-semibold text-gray-800 mb-2">
-                Assumption of the Blessed Virgin Mary
-              </h4>
-              <p className="text-gray-600 text-sm mb-4">
-                Special Mass at 7:00 PM
-              </p>
-              <Link
-                to="/events"
-                className="text-blue-600 hover:text-blue-800 font-medium text-sm"
-              >
-                Learn More →
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-lg shadow-lg p-6"
-            >
-              <div className="flex items-center mb-4">
-                <FaCalendarAlt className="text-blue-600 mr-3" />
-                <span className="text-sm text-gray-500">Every Sunday</span>
-              </div>
-              <h4 className="text-lg font-semibold text-gray-800 mb-2">
-                Faith Formation Classes
-              </h4>
-              <p className="text-gray-600 text-sm mb-4">
-                10:00 AM - Parish Hall
-              </p>
-              <Link
-                to="/events"
-                className="text-blue-600 hover:text-blue-800 font-medium text-sm"
-              >
-                Learn More →
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-lg shadow-lg p-6"
-            >
-              <div className="flex items-center mb-4">
-                <FaCalendarAlt className="text-blue-600 mr-3" />
-                <span className="text-sm text-gray-500">August 20, 2025</span>
-              </div>
-              <h4 className="text-lg font-semibold text-gray-800 mb-2">
-                Community Service Day
-              </h4>
-              <p className="text-gray-600 text-sm mb-4">
-                9:00 AM - Local Food Bank
-              </p>
-              <Link
-                to="/events"
-                className="text-blue-600 hover:text-blue-800 font-medium text-sm"
-              >
-                Learn More →
-              </Link>
-            </motion.div>
+            )}
           </div>
 
           <div className="text-center mt-8">
