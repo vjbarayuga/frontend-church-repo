@@ -4,7 +4,6 @@ import axiosClient from "../api/axiosClient";
 export default function EditDeletePriestBio() {
   const [bio, setBio] = useState([]);
   const [newBio, setNewBio] = useState("");
-  const [newName, setNewName] = useState("");
   const [photo, setPhoto] = useState(null);
 
   useEffect(() => {
@@ -14,7 +13,6 @@ export default function EditDeletePriestBio() {
   const handleAdd = async () => {
     const formData = new FormData();
     formData.append("bio", newBio);
-    formData.append("name", newName);
     if (photo) {
       formData.append("photo", photo);
     }
@@ -23,7 +21,6 @@ export default function EditDeletePriestBio() {
     });
     setBio([...bio, res.data]);
     setNewBio("");
-    setNewName("");
     setPhoto(null);
   };
 
@@ -36,12 +33,6 @@ export default function EditDeletePriestBio() {
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Manage Priest Bio</h2>
-      <input
-        value={newName}
-        onChange={(e) => setNewName(e.target.value)}
-        placeholder="Enter priest name..."
-        className="w-full border p-2 mb-2"
-      />
       <textarea
         value={newBio}
         onChange={(e) => setNewBio(e.target.value)}
@@ -74,7 +65,6 @@ export default function EditDeletePriestBio() {
                   className="h-16 w-16 object-cover rounded-full"
                 />
               )}
-              <span className="font-semibold mr-2">{b.name}</span>
               <span>{b.bio}</span>
             </div>
             <button
