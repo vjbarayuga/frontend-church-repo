@@ -40,6 +40,16 @@ export default function Services() {
     );
   }
 
+  // Only show the three allowed services
+  const allowedServices = [
+    "Holy Baptism",
+    "Christian Burial",
+    "Holy Matrimony",
+  ];
+  const filteredServices = services.filter((s) =>
+    allowedServices.includes(s.name)
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -69,96 +79,6 @@ export default function Services() {
             </div>
           </motion.div>
         )}
-
-        {/* Parish Services Section */}
-        <section className="mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">
-              Our Parish Services
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We offer various ministries and programs to serve our community
-              and help you grow in faith.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {services.map((service, index) => (
-              <motion.div
-                key={service._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-              >
-                {service.image && (
-                  <img
-                    src={service.image}
-                    alt={service.name}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold text-gray-800 mb-3">
-                    {service.name}
-                  </h3>
-                  <p className="text-gray-600 mb-4">{service.description}</p>
-
-                  {/* Requirements */}
-                  {service.requirements && service.requirements.length > 0 && (
-                    <div className="mb-4">
-                      <h4 className="font-semibold text-gray-800 mb-2">
-                        Requirements:
-                      </h4>
-                      <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                        {service.requirements.map((req, idx) => (
-                          <li key={idx}>{req}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Process Steps */}
-                  {service.processSteps && service.processSteps.length > 0 && (
-                    <div className="mb-4">
-                      <h4 className="font-semibold text-gray-800 mb-2">
-                        How to Join:
-                      </h4>
-                      <ol className="list-decimal list-inside text-sm text-gray-600 space-y-1">
-                        {service.processSteps.map((step, idx) => (
-                          <li key={idx}>
-                            <span className="font-medium">{step.step}:</span>{" "}
-                            {step.description}
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  )}
-
-                  {/* Fees and Contact */}
-                  <div className="border-t pt-4 mt-4">
-                    {service.fees && (
-                      <p className="text-sm text-gray-600 mb-2">
-                        <span className="font-medium">Fees:</span>{" "}
-                        {service.fees}
-                      </p>
-                    )}
-                    {service.contactInfo && (
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Contact:</span>{" "}
-                        {service.contactInfo}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
 
         {/* Sacraments Section */}
         <section>
@@ -270,12 +190,7 @@ export default function Services() {
                     )}
                   </div>
 
-                  {/* CTA Button */}
-                  <div className="mt-4">
-                    <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-                      Learn More & Apply
-                    </button>
-                  </div>
+                  {/* CTA Button removed as requested */}
                 </div>
               </motion.div>
             ))}

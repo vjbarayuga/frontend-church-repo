@@ -29,7 +29,6 @@ export default function Dashboard() {
       title: "Church Information",
       links: [
         // { to: "/admin/edit-history", label: "Edit Church History" },
-        { to: "/admin/edit-priest", label: "Edit Priest Biography" },
         { to: "/admin/edit-schedule", label: "Edit Mass Schedule" },
       ],
     },

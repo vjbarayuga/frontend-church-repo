@@ -39,32 +39,102 @@ export default function EditDeleteAnnouncements() {
     setAnnouncements(announcements.filter((a) => a._id !== id));
   };
 
+  const [editId, setEditId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editContent, setEditContent] = useState("");
+  const [editImage, setEditImage] = useState(null);
+
+  const startEdit = (a) => {
+    setEditId(a._id);
+    setEditTitle(a.title);
+    setEditContent(a.content);
+    setEditImage(null);
+  };
+
+  const handleUpdate = async () => {
+    if (!editTitle || !editContent) return;
+    const formData = new FormData();
+    formData.append("title", editTitle);
+    formData.append("content", editContent);
+    if (editImage) formData.append("image", editImage);
+    const res = await axiosClient.put(`/announcements/${editId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    setAnnouncements(
+      announcements.map((a) => (a._id === editId ? res.data : a))
+    );
+    setEditId(null);
+    setEditTitle("");
+    setEditContent("");
+    setEditImage(null);
+  };
+
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6">
       <h2 className="text-2xl font-bold mb-4">Manage Announcements</h2>
       <div className="space-y-3">
         {announcements.map((a) => (
           <div key={a._id} className="border p-3 rounded shadow">
-            <h3 className="font-semibold">{a.title}</h3>
-            <p className="text-sm text-gray-600">
-              {new Date(a.date).toLocaleDateString()}
-            </p>
-            <p className="mt-1 text-gray-800">{a.content}</p>
-            {a.heroImage && (
-              <img
-                src={a.heroImage}
-                alt="Hero"
-                className="mt-2 max-h-32 rounded"
-              />
+            {editId === a._id ? (
+              <>
+                <input
+                  className="w-full border p-2 mb-2"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                />
+                <textarea
+                  className="w-full border p-2 h-24"
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setEditImage(e.target.files[0])}
+                  className="border p-2 mb-2 block"
+                />
+                <div className="flex gap-2 mt-2">
+                  <button onClick={handleUpdate} className="text-green-600">
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditId(null)}
+                    className="text-gray-600"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3 className="font-semibold">{a.title}</h3>
+                <p className="text-sm text-gray-600">
+                  {new Date(a.date).toLocaleDateString()}
+                </p>
+                <p className="mt-1 text-gray-800">{a.content}</p>
+                {a.heroImage && (
+                  <img
+                    src={a.heroImage}
+                    alt="Hero"
+                    className="mt-2 max-h-32 rounded"
+                  />
+                )}
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => startEdit(a)}
+                    className="text-blue-600"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(a._id)}
+                    className="text-red-600"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </>
             )}
-            <div className="flex gap-2 mt-2">
-              <button
-                onClick={() => handleDelete(a._id)}
-                className="text-red-600"
-              >
-                Delete
-              </button>
-            </div>
           </div>
         ))}
       </div>

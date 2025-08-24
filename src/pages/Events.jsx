@@ -4,43 +4,28 @@ import Hero from "../components/Hero";
 
 export default function Events() {
   const [events, setEvents] = useState([]);
-  const [heroData, setHeroData] = useState({
-    heroImage: "/images/events-hero.jpg",
-    heroTitle: "Church Events",
-    heroSubtitle: "Join Our Community Gatherings and Celebrations",
-  });
-
-  useEffect(() => {
-    async function fetchPageContent() {
-      try {
-        const res = await axiosClient.get("/page-content/events");
-        if (res.data) {
-          setHeroData({
-            heroImage: res.data.heroImage || "/images/events-hero.jpg",
-            heroTitle: res.data.heroTitle || "Church Events",
-            heroSubtitle:
-              res.data.heroSubtitle ||
-              "Join Our Community Gatherings and Celebrations",
-          });
-        }
-      } catch (err) {}
-    }
-    fetchPageContent();
-  }, []);
+  const [heroImage, setHeroImage] = useState("/images/events-hero.jpg");
 
   useEffect(() => {
     axiosClient.get("/events").then((res) => {
-      console.log(res.data);
       setEvents(res.data);
     });
+    axiosClient
+      .get("/page-content/events")
+      .then((res) => {
+        if (res.data && res.data.heroImage) {
+          setHeroImage(res.data.heroImage);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   return (
     <>
       <Hero
-        title={heroData.heroTitle}
-        subtitle={heroData.heroSubtitle}
-        backgroundImage={heroData.heroImage}
+        title="Church Events"
+        subtitle="Join Our Community Gatherings and Celebrations"
+        backgroundImage={heroImage}
       />
       <div className="max-w-4xl mx-auto p-6 mt-6">
         <h1 className="text-3xl font-bold mb-4">Upcoming Events</h1>

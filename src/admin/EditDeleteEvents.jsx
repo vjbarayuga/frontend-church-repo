@@ -36,6 +36,38 @@ export default function EditDeleteEvents() {
     });
   };
 
+  const [editId, setEditId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDate, setEditDate] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editImage, setEditImage] = useState(null);
+
+  const startEdit = (e) => {
+    setEditId(e._id);
+    setEditTitle(e.title);
+    setEditDate(e.date);
+    setEditDescription(e.description);
+    setEditImage(null);
+  };
+
+  const handleUpdate = async () => {
+    if (!editTitle || !editDate || !editDescription) return;
+    const formData = new FormData();
+    formData.append("title", editTitle);
+    formData.append("date", editDate);
+    formData.append("description", editDescription);
+    if (editImage) formData.append("image", editImage);
+    const res = await axiosClient.put(`/events/${editId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    setEvents(events.map((e) => (e._id === editId ? res.data : e)));
+    setEditId(null);
+    setEditTitle("");
+    setEditDate("");
+    setEditDescription("");
+    setEditImage(null);
+  };
+
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Manage Events</h2>
@@ -79,23 +111,72 @@ export default function EditDeleteEvents() {
             className="flex justify-between items-center border p-2 mb-2"
           >
             <div>
-              <p className="font-bold">{e.title}</p>
-              <p>{e.date}</p>
-              <p>{e.description}</p>
-              {e.heroImage && (
-                <img
-                  src={e.heroImage}
-                  alt="Hero"
-                  className="mt-2 max-h-32 rounded"
-                />
+              {editId === e._id ? (
+                <>
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={(ev) => setEditTitle(ev.target.value)}
+                    className="border p-2 mb-2 w-full"
+                  />
+                  <input
+                    type="date"
+                    value={editDate}
+                    onChange={(ev) => setEditDate(ev.target.value)}
+                    className="border p-2 mb-2 w-full"
+                  />
+                  <textarea
+                    value={editDescription}
+                    onChange={(ev) => setEditDescription(ev.target.value)}
+                    className="w-full border p-2 mb-2"
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(ev) => setEditImage(ev.target.files[0])}
+                    className="border p-2 mb-2 block"
+                  />
+                  <div className="flex gap-2 mt-2">
+                    <button onClick={handleUpdate} className="text-green-600">
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditId(null)}
+                      className="text-gray-600"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="font-bold">{e.title}</p>
+                  <p>{e.date}</p>
+                  <p>{e.description}</p>
+                  {e.heroImage && (
+                    <img
+                      src={e.heroImage}
+                      alt="Hero"
+                      className="mt-2 max-h-32 rounded"
+                    />
+                  )}
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      onClick={() => startEdit(e)}
+                      className="text-blue-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(e._id)}
+                      className="bg-red-500 text-white px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
               )}
             </div>
-            <button
-              onClick={() => handleDelete(e._id)}
-              className="bg-red-500 text-white px-3 py-1 rounded"
-            >
-              Delete
-            </button>
           </li>
         ))}
       </ul>
