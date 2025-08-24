@@ -13,6 +13,86 @@ import {
   FaClock,
 } from "react-icons/fa";
 
+// MassScheduleSummary component moved outside Home to fix compile errors
+function MassScheduleSummary() {
+  const [schedule, setSchedule] = useState({});
+  useEffect(() => {
+    axiosClient.get("/massschedule").then((res) => {
+      const grouped = res.data.reduce((acc, curr) => {
+        if (!acc[curr.day]) acc[curr.day] = [];
+        acc[curr.day].push(curr.time);
+        return acc;
+      }, {});
+      setSchedule(grouped);
+    });
+  }, []);
+
+  if (Object.keys(schedule).length === 0) {
+    return <div className="text-gray-500">Loading schedule...</div>;
+  }
+
+  // Only show a summary: Weekend Masses, Daily Mass, Confession Times if present
+  const confessionRegex = /confession/i;
+
+  return (
+    <>
+      {/* Weekend Masses */}
+      {(schedule["Saturday"] || schedule["Sunday"]) && (
+        <div className="border-l-4 border-blue-600 pl-4">
+          <div className="text-gray-600">
+            {schedule["Saturday"] && (
+              <p>Saturday: {schedule["Saturday"].join(", ")}</p>
+            )}
+            {schedule["Sunday"] && (
+              <p>Sunday: {schedule["Sunday"].join(", ")}</p>
+            )}
+          </div>
+        </div>
+      )}
+      {/* Daily Mass */}
+      {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].some(
+        (day) => schedule[day]
+      ) && (
+        <div className="border-l-4 border-green-600 pl-4">
+          <h4 className="font-semibold text-gray-800">Daily Mass</h4>
+          <div className="text-gray-600">
+            {schedule["Monday"] && (
+              <p>Monday: {schedule["Monday"].join(", ")}</p>
+            )}
+            {schedule["Tuesday"] && (
+              <p>Tuesday: {schedule["Tuesday"].join(", ")}</p>
+            )}
+            {schedule["Wednesday"] && (
+              <p>Wednesday: {schedule["Wednesday"].join(", ")}</p>
+            )}
+            {schedule["Thursday"] && (
+              <p>Thursday: {schedule["Thursday"].join(", ")}</p>
+            )}
+            {schedule["Friday"] && (
+              <p>Friday: {schedule["Friday"].join(", ")}</p>
+            )}
+          </div>
+        </div>
+      )}
+      {/* Confession Times */}
+      {Object.keys(schedule).some((day) => confessionRegex.test(day)) && (
+        <div className="border-l-4 border-purple-600 pl-4">
+          <h4 className="font-semibold text-gray-800">Confession Times</h4>
+          <div className="text-gray-600 flex items-center">
+            <FaClock className="mr-2" />
+            <span>
+              {Object.entries(schedule)
+                .filter(([day]) => confessionRegex.test(day))
+                .map(([day, times]) => `${day}: ${times.join(", ")}`)
+                .join("; ")}
+            </span>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [todaysReadings, setTodaysReadings] = useState(null);
@@ -276,33 +356,8 @@ export default function Home() {
               </div>
 
               <div className="space-y-4">
-                <div className="border-l-4 border-blue-600 pl-4">
-                  <h4 className="font-semibold text-gray-800">
-                    Weekend Masses
-                  </h4>
-                  <div className="text-gray-600">
-                    <p>Saturday: 5:00 PM</p>
-                    <p>Sunday: 7:00 AM, 9:00 AM, 11:00 AM</p>
-                  </div>
-                </div>
-
-                <div className="border-l-4 border-green-600 pl-4">
-                  <h4 className="font-semibold text-gray-800">Daily Mass</h4>
-                  <div className="text-gray-600">
-                    <p>Monday: 7:00 AM (Communion Service)</p>
-                    <p>Tuesday - Saturday: 7:00 AM</p>
-                  </div>
-                </div>
-
-                <div className="border-l-4 border-purple-600 pl-4">
-                  <h4 className="font-semibold text-gray-800">
-                    Confession Times
-                  </h4>
-                  <div className="text-gray-600 flex items-center">
-                    <FaClock className="mr-2" />
-                    <span>Saturday: 4:00 PM - 4:30 PM</span>
-                  </div>
-                </div>
+                {/* Fetch and display Mass Schedule summary from API */}
+                <MassScheduleSummary />
               </div>
 
               <Link
