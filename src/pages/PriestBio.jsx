@@ -11,28 +11,26 @@ export default function PriestBio() {
   });
 
   useEffect(() => {
+    // Fetch priest bio and hero data from page-content/priest
     axiosClient
-      .get("/priests")
+      .get("/page-content/priest")
       .then((res) => {
-        if (res.data && res.data.length > 0) {
-          setBio(res.data[0].bio);
+        if (res.data) {
+          setBio(res.data.content || "Priest bio not available.");
+          setHeroData({
+            heroImage: res.data.heroImage || "/images/priest-hero.jpg",
+            heroTitle: res.data.heroTitle || "Our Parish Priest",
+            heroSubtitle:
+              res.data.heroSubtitle ||
+              "Serving Our Community with Faith and Dedication",
+          });
+        } else {
+          setBio("Priest bio not available.");
         }
       })
-      .catch((err) => {
+      .catch(() => {
         setBio("Priest bio not available.");
       });
-    // Fetch hero data
-    axiosClient.get("/page-content/priest").then((res) => {
-      if (res.data) {
-        setHeroData({
-          heroImage: res.data.heroImage || "/images/priest-hero.jpg",
-          heroTitle: res.data.heroTitle || "Our Parish Priest",
-          heroSubtitle:
-            res.data.heroSubtitle ||
-            "Serving Our Community with Faith and Dedication",
-        });
-      }
-    });
   }, []);
 
   return (
