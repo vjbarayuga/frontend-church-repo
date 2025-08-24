@@ -12,6 +12,10 @@ export default function EditPageContent() {
     heroTitle: "",
     heroSubtitle: "",
     content: "",
+    specialSchedules: [],
+    officeHours: [],
+    officeEmergencyNote: "",
+    contactSection: { heading: "", description: "", phone: "", email: "" },
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -36,6 +40,16 @@ export default function EditPageContent() {
         heroTitle: pageContents[selectedPage].heroTitle || "",
         heroSubtitle: pageContents[selectedPage].heroSubtitle || "",
         content: pageContents[selectedPage].content || "",
+        specialSchedules: pageContents[selectedPage].specialSchedules || [],
+        officeHours: pageContents[selectedPage].officeHours || [],
+        officeEmergencyNote:
+          pageContents[selectedPage].officeEmergencyNote || "",
+        contactSection: pageContents[selectedPage].contactSection || {
+          heading: "",
+          description: "",
+          phone: "",
+          email: "",
+        },
       });
       setPreviewUrl(pageContents[selectedPage].heroImage || "");
     } else {
@@ -44,6 +58,10 @@ export default function EditPageContent() {
         heroTitle: "",
         heroSubtitle: "",
         content: "",
+        specialSchedules: [],
+        officeHours: [],
+        officeEmergencyNote: "",
+        contactSection: { heading: "", description: "", phone: "", email: "" },
       });
       setPreviewUrl("");
     }
@@ -116,6 +134,17 @@ export default function EditPageContent() {
         heroSubtitle: formData.heroSubtitle,
         content: formData.content,
         isActive: true,
+        // Only for mass-times
+        specialSchedules:
+          selectedPage === "mass-times" ? formData.specialSchedules : undefined,
+        officeHours:
+          selectedPage === "mass-times" ? formData.officeHours : undefined,
+        officeEmergencyNote:
+          selectedPage === "mass-times"
+            ? formData.officeEmergencyNote
+            : undefined,
+        contactSection:
+          selectedPage === "mass-times" ? formData.contactSection : undefined,
       };
 
       console.log("Submitting page data:", pageData);
@@ -273,6 +302,228 @@ export default function EditPageContent() {
                 placeholder="Enter main page content"
               />
             </div>
+
+            {/* Special Schedules for Mass Times */}
+            {selectedPage === "mass-times" && (
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Special Schedules
+                </label>
+                {formData.specialSchedules.map((sched, i) => (
+                  <div key={i} className="border p-3 rounded mb-2">
+                    <input
+                      type="text"
+                      value={sched.title}
+                      disabled={!isEditing}
+                      onChange={(e) => {
+                        const arr = [...formData.specialSchedules];
+                        arr[i].title = e.target.value;
+                        setFormData({ ...formData, specialSchedules: arr });
+                      }}
+                      className="mb-2 w-full p-2 border rounded"
+                      placeholder="Section Title (e.g. Confession Times)"
+                    />
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={sched.color}
+                        disabled={!isEditing}
+                        onChange={(e) => {
+                          const arr = [...formData.specialSchedules];
+                          arr[i].color = e.target.value;
+                          setFormData({ ...formData, specialSchedules: arr });
+                        }}
+                        className="w-1/2 p-2 border rounded"
+                        placeholder="Color class (e.g. bg-purple-600)"
+                      />
+                      <input
+                        type="text"
+                        value={sched.icon || ""}
+                        disabled
+                        className="w-1/2 p-2 border rounded bg-gray-100"
+                        placeholder="Icon (set in code)"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      {sched.items.map((item, idx) => (
+                        <div key={idx} className="flex gap-2">
+                          <input
+                            type="text"
+                            value={item.day}
+                            disabled={!isEditing}
+                            onChange={(e) => {
+                              const arr = [...formData.specialSchedules];
+                              arr[i].items[idx].day = e.target.value;
+                              setFormData({
+                                ...formData,
+                                specialSchedules: arr,
+                              });
+                            }}
+                            className="w-1/3 p-2 border rounded"
+                            placeholder="Day"
+                          />
+                          <input
+                            type="text"
+                            value={item.time}
+                            disabled={!isEditing}
+                            onChange={(e) => {
+                              const arr = [...formData.specialSchedules];
+                              arr[i].items[idx].time = e.target.value;
+                              setFormData({
+                                ...formData,
+                                specialSchedules: arr,
+                              });
+                            }}
+                            className="w-1/3 p-2 border rounded"
+                            placeholder="Time"
+                          />
+                          <input
+                            type="text"
+                            value={item.location}
+                            disabled={!isEditing}
+                            onChange={(e) => {
+                              const arr = [...formData.specialSchedules];
+                              arr[i].items[idx].location = e.target.value;
+                              setFormData({
+                                ...formData,
+                                specialSchedules: arr,
+                              });
+                            }}
+                            className="w-1/3 p-2 border rounded"
+                            placeholder="Location"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Office Hours for Mass Times */}
+            {selectedPage === "mass-times" && (
+              <div className="space-y-4 mt-6">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Office Hours
+                </label>
+                {formData.officeHours.map((oh, i) => (
+                  <div key={i} className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={oh.days}
+                      disabled={!isEditing}
+                      onChange={(e) => {
+                        const arr = [...formData.officeHours];
+                        arr[i].days = e.target.value;
+                        setFormData({ ...formData, officeHours: arr });
+                      }}
+                      className="w-1/2 p-2 border rounded"
+                      placeholder="Days (e.g. Tuesday - Friday)"
+                    />
+                    <input
+                      type="text"
+                      value={oh.hours}
+                      disabled={!isEditing}
+                      onChange={(e) => {
+                        const arr = [...formData.officeHours];
+                        arr[i].hours = e.target.value;
+                        setFormData({ ...formData, officeHours: arr });
+                      }}
+                      className="w-1/2 p-2 border rounded"
+                      placeholder="Hours (e.g. 9:00 AM - 3:00 PM or CLOSED)"
+                    />
+                  </div>
+                ))}
+                <label className="block text-sm font-medium text-gray-700 mb-1 mt-2">
+                  Emergency Note
+                </label>
+                <input
+                  type="text"
+                  value={formData.officeEmergencyNote}
+                  disabled={!isEditing}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      officeEmergencyNote: e.target.value,
+                    })
+                  }
+                  className="w-full p-2 border rounded"
+                  placeholder="For emergencies outside office hours, ..."
+                />
+              </div>
+            )}
+
+            {/* Contact Section for Mass Times */}
+            {selectedPage === "mass-times" && (
+              <div className="space-y-4 mt-6">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Contact Section
+                </label>
+                <input
+                  type="text"
+                  value={formData.contactSection.heading}
+                  disabled={!isEditing}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      contactSection: {
+                        ...formData.contactSection,
+                        heading: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-2 border rounded mb-2"
+                  placeholder="Heading (e.g. Questions About Mass Times?)"
+                />
+                <textarea
+                  value={formData.contactSection.description}
+                  disabled={!isEditing}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      contactSection: {
+                        ...formData.contactSection,
+                        description: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-2 border rounded mb-2"
+                  placeholder="Description"
+                />
+                <input
+                  type="text"
+                  value={formData.contactSection.phone}
+                  disabled={!isEditing}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      contactSection: {
+                        ...formData.contactSection,
+                        phone: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-2 border rounded mb-2"
+                  placeholder="Phone (e.g. (555) 123-4567)"
+                />
+                <input
+                  type="text"
+                  value={formData.contactSection.email}
+                  disabled={!isEditing}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      contactSection: {
+                        ...formData.contactSection,
+                        email: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-2 border rounded"
+                  placeholder="Email (e.g. info@ourladyassumption.org)"
+                />
+              </div>
+            )}
           </div>
 
           {/* Right Column - Image Upload */}

@@ -15,12 +15,6 @@ export default function AdminLayout({ setIsAdmin }) {
 
   return (
     <div className="min-h-screen">
-      <Hero
-        title="Admin Dashboard"
-        subtitle="Manage Your Church Content"
-        backgroundImage="/images/admin-hero.jpg"
-      />
-
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Admin Panel</h1>

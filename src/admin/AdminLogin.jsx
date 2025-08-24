@@ -33,11 +33,6 @@ export default function AdminLogin({ setIsAdmin }) {
 
   return (
     <>
-      <Hero
-        title="Admin Login"
-        subtitle="Access the Church Management System"
-        backgroundImage="/images/admin-login-hero.jpg"
-      />
       <div className="max-w-md mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
           Admin Login

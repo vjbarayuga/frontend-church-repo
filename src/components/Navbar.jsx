@@ -32,14 +32,11 @@ export default function Navbar() {
           <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6">
             <div className="flex items-center gap-2">
               <FaPhone />
-              <span>(555) 123-4567</span>
+              <span>Contact Us</span>
             </div>
             <div className="flex items-center gap-2">
               <FaEnvelope />
-              <span>info@ourladyassumption.org</span>
-            </div>
-            <div className="hidden md:block">
-              Office Hours: Tue-Fri 9:00am-3:00pm
+              <span>nuestrasenoradelaasuncion23@gmail.com</span>
             </div>
           </div>
           <div className="flex items-center gap-3 mt-2 md:mt-0">
