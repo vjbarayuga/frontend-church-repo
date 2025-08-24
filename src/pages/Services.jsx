@@ -197,22 +197,7 @@ export default function Services() {
           </div>
         </section>
 
-        {/* Contact Section (Dynamic from Admin Panel) */}
-        {pageContent?.content && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-16 bg-white rounded-lg shadow-lg p-8"
-          >
-            <div className="prose max-w-none mx-auto">
-              {pageContent.content.split("\n").map((paragraph, idx) => (
-                <p key={idx} className="mb-4 text-gray-700 leading-relaxed">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </motion.section>
-        )}
+        {/* ...no duplicate contact section... */}
       </div>
     </div>
   );
