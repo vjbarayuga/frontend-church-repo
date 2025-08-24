@@ -197,42 +197,22 @@ export default function Services() {
           </div>
         </section>
 
-        {/* Contact Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-16 bg-white rounded-lg shadow-lg p-8"
-        >
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">
-              Need More Information?
-            </h2>
-            <p className="text-gray-600">
-              Contact our parish office for detailed information about any of
-              our services or sacraments.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <div className="flex flex-col items-center">
-              <FaPhone className="text-3xl text-blue-600 mb-2" />
-              <h3 className="font-semibold text-gray-800">Phone</h3>
-              <p className="text-gray-600">(02) 123-4567</p>
+        {/* Contact Section (Dynamic from Admin Panel) */}
+        {pageContent?.content && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-16 bg-white rounded-lg shadow-lg p-8"
+          >
+            <div className="prose max-w-none mx-auto">
+              {pageContent.content.split("\n").map((paragraph, idx) => (
+                <p key={idx} className="mb-4 text-gray-700 leading-relaxed">
+                  {paragraph}
+                </p>
+              ))}
             </div>
-            <div className="flex flex-col items-center">
-              <FaEnvelope className="text-3xl text-blue-600 mb-2" />
-              <h3 className="font-semibold text-gray-800">Email</h3>
-              <p className="text-gray-600">info@church.org</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <FaMapMarkerAlt className="text-3xl text-blue-600 mb-2" />
-              <h3 className="font-semibold text-gray-800">Visit Us</h3>
-              <p className="text-gray-600">
-                Parish Office Hours: Mon-Fri 9AM-5PM
-              </p>
-            </div>
-          </div>
-        </motion.section>
+          </motion.section>
+        )}
       </div>
     </div>
   );
